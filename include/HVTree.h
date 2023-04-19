@@ -4,9 +4,9 @@
 #include<set>
 using namespace std;
 struct Location{
-    int _x;
-    int _y;
-    Location(int x=0, int y=0):_x(x),_y(y){}
+    double _x;
+    double _y;
+    Location(double x=0, double y=0):_x(x),_y(y){}
 };
 
 struct Rect{
@@ -19,6 +19,8 @@ struct Rect{
          double yMin = 0, 
          double xMax = 0, 
          double yMax = 0);
+
+    bool operator == (const Rect& other);
 
     bool isContaine(const Location& loc);
 
@@ -47,18 +49,17 @@ class HVTree{
             Node*               _rightChild;
             bool                _isLeafNode;
 
-            Node (deque<Location>& points, 
+            Node (deque<Location>& points,
+                 Rect boundary, 
                  Node* leftChild= nullptr,
                  Node* rightChild=nullptr
                  ):
-                _boundary(),
                 _points(points),
+                _boundary(boundary),
                 _leftChild(leftChild),
                 _rightChild(rightChild),
                 _isLeafNode(false)
-            {
-                _boundary = Rect::BoundingBox(_points);
-            }
+            {}
         };
 
         Node* buildInternal(deque<Location>& points, Rect box, bool vertical=false);

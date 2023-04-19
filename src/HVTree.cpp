@@ -15,6 +15,17 @@ Rect::Rect(double xMin, double yMin , double xMax, double yMax):
     _yMax(yMax)
 {}
 
+ bool 
+ Rect::operator == (const Rect& other){
+    if (_xMin == other._xMin &&
+        _xMax == other._xMax &&
+        _yMin == other._yMin &&
+        _yMax == other._yMax  ) {
+            return true;
+    }
+    return false;
+ }
+
 
 bool 
 Rect::isContaine(const Location& loc){
@@ -81,7 +92,7 @@ HVTree::query(Rect queryBox){
 HVTree::Node*
 HVTree::buildInternal(deque<Location>& points, Rect box, bool vertical) {
     if (points.empty()) return nullptr;
-    Node* node = new Node(points);
+    Node* node = new Node(points, box);
     auto size = points.size();
     if (size==1) {
         node->_isLeafNode = true;
@@ -121,34 +132,56 @@ HVTree::queryInternal(Rect queryBox, Node* root){
             return result;
         }
     } else {
-        if (root->_leftChild->_boundary.isWithin(queryBox)){
+        auto lChild = root->_leftChild;
+        auto rChild = root->_rightChild;
+
+        if(root->_boundary == queryBox){
+            //We are lucky here :)
+            return root->_points;
+        } else if (lChild && lChild->_boundary.isWithin(queryBox)){
             return queryInternal(queryBox,root->_leftChild);
-        } else if(root->_rightChild->_boundary.isWithin(queryBox)) {
+        } else if(rChild && rChild->_boundary.isWithin(queryBox)) {
             return queryInternal(queryBox,root->_rightChild);
-        } else {
-            if(root->_leftChild->_boundary.isContaine(Location(queryBox._xMin,queryBox._yMin))&&
-               root->_leftChild->_boundary.isContaine(Location(queryBox._xMax,queryBox._yMin))){
+        } else if (lChild && rChild) {
+            if(lChild->_boundary.isContaine(Location(queryBox._xMin,queryBox._yMin))&&
+               lChild->_boundary.isContaine(Location(queryBox._xMax,queryBox._yMin))){
                 auto result1 = queryInternal(Rect(queryBox._xMin,
                                                   queryBox._yMin,
                                                   queryBox._xMax,
-                                                  root->_leftChild->_boundary._yMax),root->_leftChild);
+                                                  lChild->_boundary._yMax),
+                                            lChild);
                 auto result2 = queryInternal(Rect(queryBox._xMin,
-                                                  root->_leftChild->_boundary._yMin,
+                                                  lChild->_boundary._yMax,
                                                   queryBox._xMax,
-                                                  queryBox._yMax),root->_leftChild);
-                result1.insert(result1.end(),result2.begin(),result.end());
+                                                  queryBox._yMax),
+                                            rChild);
+                result1.insert(result1.end(),result2.begin(),result2.end());
                 return result1;
             } else {
                 auto result1 = queryInternal(Rect(queryBox._xMin,
                                                   queryBox._yMin,
-                                                  root->_leftChild->_boundary._xMax,
-                                                  queryBox._yMax),root->_leftChild);
-                auto result2 = queryInternal(Rect(root->_leftChild->_boundary._xMax,
+                                                  lChild->_boundary._xMax,
+                                                  queryBox._yMax),
+                                            lChild);
+                auto result2 = queryInternal(Rect(lChild->_boundary._xMax,
                                                   queryBox._yMin,
                                                   queryBox._xMax,
-                                                  queryBox._yMax),root->_leftChild);
-                result1.insert(result1.end(),result2.begin(),result.end());
+                                                  queryBox._yMax),
+                                            rChild);
+                result1.insert(result1.end(),result2.begin(),result2.end());
                 return result1;
+            }
+        } else if(lChild || rChild){
+            auto child = lChild? lChild : rChild;
+            if(child->_boundary.isWithin(queryBox)){
+                return queryInternal(queryBox,child);
+            } else if(child->_boundary.isContaine(Location(queryBox._xMin,queryBox._yMin))){
+                return queryInternal(Rect(
+                    queryBox._xMin,
+                    queryBox._yMin,
+                    queryBox._xMax < child->_boundary._xMax ? queryBox._xMax : child->_boundary._xMax,
+                    queryBox._yMax < child->_boundary._yMax ? queryBox._yMax : child->_boundary._yMax
+                ),child);
             }
         }
     }
