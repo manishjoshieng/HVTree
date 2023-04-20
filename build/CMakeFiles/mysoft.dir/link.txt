@@ -1,1 +1,0 @@
-/usr/bin/g++ -g CMakeFiles/mysoft.dir/main.cpp.o -o mysoft 
