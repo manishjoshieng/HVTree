@@ -1,3 +1,0 @@
-/home/manish/Documents/Github/cppProjects/HVTree/build/CMakeFiles/HVTREE.dir
-/home/manish/Documents/Github/cppProjects/HVTree/build/CMakeFiles/edit_cache.dir
-/home/manish/Documents/Github/cppProjects/HVTree/build/CMakeFiles/rebuild_cache.dir
