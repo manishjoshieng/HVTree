@@ -3,11 +3,17 @@
 #include<deque>
 #include<set>
 #include<iostream>
+#include<memory>
+
+
 using namespace std;
 struct Location{
+
     double _x;
     double _y;
+    
     Location(double x=0, double y=0):_x(x),_y(y){}
+    
     friend ostream& operator << (ostream& os, const Location& r){
          os << "Location: {"<<r._x<<" "<<r._y<<"}\n";
         return os;
@@ -41,23 +47,27 @@ struct Rect{
     static pair<Rect, Rect> HalfBox(const Rect& box, bool verical = false);
 };
 
-
 class HVTree{
-
+    
     public:
+        
+        HVTree():_root(nullptr) {}
+        
         //Public API
         void build(deque<Location>& points);
 
         deque<Location> query(Rect queryBox);
+
+
     private:
 
         //Internal API
         struct Node {
-            Rect                _boundary;
-            deque<Location>     _points;
-            Node*               _leftChild;
-            Node*               _rightChild;
-            bool                _isLeafNode;
+            Rect                        _boundary;
+            deque<Location>             _points;
+            unique_ptr<Node>            _leftChild;
+            unique_ptr<Node>            _rightChild;
+            bool                        _isLeafNode;
 
             Node (deque<Location>& points,
                  Rect boundary, 
@@ -72,10 +82,11 @@ class HVTree{
             {}
         };
 
-        Node* buildInternal(deque<Location>& points, Rect box, bool vertical=false);
 
-        deque<Location> queryInternal(Rect queryBox, Node* root);
+        unique_ptr<Node> buildInternal(deque<Location>& points, Rect box, bool vertical=false);
+
+        deque<Location>  queryInternal(Rect queryBox, const unique_ptr<Node>& root) const;
 
         //Data
-        Node* _root;
+        unique_ptr<Node>    _root;
 };

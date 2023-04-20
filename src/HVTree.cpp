@@ -83,6 +83,7 @@ HVTree::build(deque<Location>& points){
     std::cout<<"Building tree...\n";
     Rect box = Rect::BoundingBox(points);
     _root = buildInternal(points, box);
+    std::cout<<"Tree build with "<<_root->_boundary<<std::endl;
 }
 
 deque<Location> 
@@ -92,10 +93,10 @@ HVTree::query(Rect queryBox){
     return result;
 }
 
-HVTree::Node*
+unique_ptr<HVTree::Node>
 HVTree::buildInternal(deque<Location>& points, Rect box, bool vertical) {
     if (points.empty()) return nullptr;
-    Node* node = new Node(points, box);
+    unique_ptr<Node> node = make_unique<Node>(points, box);
     auto size = points.size();
     if (size==1) {
         node->_isLeafNode = true;
@@ -125,7 +126,7 @@ HVTree::buildInternal(deque<Location>& points, Rect box, bool vertical) {
 }
 
 deque<Location> 
-HVTree::queryInternal(Rect queryBox, Node* root){
+HVTree::queryInternal(Rect queryBox, const unique_ptr<Node>& root) const {
     deque<Location> result;
     if(root==nullptr) return result;
 
@@ -135,8 +136,8 @@ HVTree::queryInternal(Rect queryBox, Node* root){
             return result;
         }
     } else {
-        auto lChild = root->_leftChild;
-        auto rChild = root->_rightChild;
+        const unique_ptr<Node>& lChild = root->_leftChild;
+        const unique_ptr<Node>& rChild = root->_rightChild;
 
         if(root->_boundary == queryBox){
             //We are lucky here :)
@@ -175,7 +176,7 @@ HVTree::queryInternal(Rect queryBox, Node* root){
                 return result1;
             }
         } else if(lChild || rChild){
-            auto child = lChild? lChild : rChild;
+            const unique_ptr<Node>& child = lChild? lChild : rChild;
             if(child->_boundary.isWithin(queryBox)){
                 return queryInternal(queryBox,child);
             } else if(child->_boundary.isContaine(Location(queryBox._xMin,queryBox._yMin))){

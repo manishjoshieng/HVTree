@@ -15,6 +15,8 @@ int main() {
         {3,8}
     };
 
+    
+
     std::cout<<"Tree points: \n";
     for(auto l : points){
         std::cout<<l;
