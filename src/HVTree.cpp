@@ -67,12 +67,14 @@ Rect::BoundingBox(const deque<Location>& locations) {
 pair<Rect, Rect> 
 Rect::HalfBox(const Rect& box, bool verical){
     if(verical) {
-        Rect firstHalf(box._xMin,box._yMin,box._xMax/2.0 , box._yMax);
-        Rect secondHalf(box._xMax/2.0 , box._yMin, box._xMax , box._yMax);
+        auto diff = (box._xMax - box._xMin)/2.0;
+        Rect firstHalf(box._xMin,box._yMin,box._xMin + diff , box._yMax);
+        Rect secondHalf(box._xMax - diff , box._yMin, box._xMax , box._yMax);
         return std::pair<Rect,Rect>(firstHalf,secondHalf);
     } else {
-        Rect firstHalf(box._xMin,box._yMin,box._xMax, box._yMax/2.0);
-        Rect secondHalf(box._xMin , box._yMax/2.0, box._xMax , box._yMax);
+        auto diff = (box._yMax - box._yMin)/2.0;
+        Rect firstHalf(box._xMin,box._yMin,box._xMax, box._yMin + diff);
+        Rect secondHalf(box._xMin , box._yMax - diff, box._xMax , box._yMax);
         return std::pair<Rect,Rect>(firstHalf,secondHalf);
     }
 }
