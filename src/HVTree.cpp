@@ -24,8 +24,7 @@ Rect::Rect(double xMin, double yMin , double xMax, double yMax):
             return true;
     }
     return false;
- }
-
+}
 
 bool 
 Rect::isContaine(const Location& loc){
@@ -81,12 +80,14 @@ Rect::HalfBox(const Rect& box, bool verical){
 
 void 
 HVTree::build(deque<Location>& points){
+    std::cout<<"Building tree...\n";
     Rect box = Rect::BoundingBox(points);
     _root = buildInternal(points, box);
 }
 
 deque<Location> 
 HVTree::query(Rect queryBox){
+    std::cout<<"Query "<<queryBox;
     deque<Location> result = queryInternal(queryBox, _root);
     return result;
 }

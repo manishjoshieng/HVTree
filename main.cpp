@@ -1,9 +1,9 @@
 #include "include/HVTree.h"
-#include<iostream>
+#include <iostream>
 
 
 int main() {
-    std::cout<<"Hello World from HVTree!!\n";
+    std::cout<<"Hello!! from HVTree!!\n";
 
     std::deque<Location> points = {
         {0,0},
@@ -14,6 +14,11 @@ int main() {
         {9,8},
         {3,8}
     };
+
+    std::cout<<"Tree points: \n";
+    for(auto l : points){
+        std::cout<<l;
+    }
 
     HVTree tree;
     tree.build(points);

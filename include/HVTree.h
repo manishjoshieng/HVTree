@@ -2,11 +2,16 @@
 
 #include<deque>
 #include<set>
+#include<iostream>
 using namespace std;
 struct Location{
     double _x;
     double _y;
     Location(double x=0, double y=0):_x(x),_y(y){}
+    friend ostream& operator << (ostream& os, const Location& r){
+         os << "Location: {"<<r._x<<" "<<r._y<<"}\n";
+        return os;
+    }
 };
 
 struct Rect{
@@ -21,6 +26,11 @@ struct Rect{
          double yMax = 0);
 
     bool operator == (const Rect& other);
+
+    friend ostream& operator << (ostream& os, const Rect& r){
+         os << "Box: {"<<r._xMin<<" "<<r._yMin<<" "<<r._xMax<<" "<<r._yMax<<"}\n";
+        return os;
+    }
 
     bool isContaine(const Location& loc);
 

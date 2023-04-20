@@ -9,10 +9,10 @@ build/
 *.log
 
 # Ignore all files in a directory
-directory/*
+build/*
 
 # Ignore all files in a directory and its subdirectories
-directory/**/*
+build/**/*
 
 # Ignore all files and directories that start with "temp"
 temp*
