@@ -1,0 +1,22 @@
+# Ignore a specific file
+#filename.txt
+
+# Ignore a specific directory
+build/
+.vscode/
+
+# Ignore all files with a certain extension
+*.log
+
+# Ignore all files in a directory
+directory/*
+
+# Ignore all files in a directory and its subdirectories
+directory/**/*
+
+# Ignore all files and directories that start with "temp"
+temp*
+
+# Ignore all files and directories that end with ".tmp"
+*.tmp
+
